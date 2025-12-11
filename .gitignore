@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Modèles (Ne jamais commiter un fichier de 6Go sur Git !)
+*.bin
+*.safetensors
+*.pt
+backend_ia/model_weights/
+
+# IDE
+.vscode/
+.idea/
