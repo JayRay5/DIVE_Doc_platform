@@ -71,8 +71,12 @@ class PAM(nn.Module):
                 x = x.view(batch_size,self.student_fmap_dim[0],self.student_fmap_dim[1],embedding_size).permute(0,3, 1, 2)
                 x = F.interpolate(x,size=self.teacher_fmap_dim,mode=self.sequence_mapping_layer_type)  # Shape: (1, D, target_height, target_width)
                 x = x.permute(0,2, 3, 1).reshape(batch_size,-1, embedding_size)
+
+            else:
+                raise ValueError(f"Need a sequence mapping type in [linear_projection, bilinear","bicubic","nearest-exact], got {sequence_mapping_layer_type}")
             
         x = self.embedding_projection_layer(x)
+        print(x.shape)
         return x
  
 class SwinPam(nn.Module):
