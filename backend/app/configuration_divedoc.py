@@ -75,36 +75,6 @@ class SwinPamVisionEncoderConfig(PretrainedConfig):
         super().__init__(**kwargs)
 
 
-class SiglipPAMVisionEncoderConfig(PretrainedConfig): 
-    model_type = "siglippam"
-    sub_configs = {"encoder_config": SiglipVisionConfig, "pam_config": PamConfig}
-    def __init__(
-        self,
-        encoder_config: SiglipVisionConfig = None,
-        pam_config: PamConfig = None,
-        **kwargs
-    ):
-        self.encoder_config = encoder_config
-        self.pam_config = pam_config
-
-        if isinstance(self.encoder_config, dict):
-            encoder_config["model_type"] = (
-                encoder_config["model_type"] if "model_type" in encoder_config else "siglip_vision_model"
-            )
-            if encoder_config["model_type"] == "siglip_vision_model":
-                self.encoder_config = SiglipVisionConfig(**encoder_config)
-            else:
-                raise ValueError(f"Need siglip_model_type, got {encoder_config['model_type']}")
-
-        if isinstance(self.pam_config, dict):
-            if pam_config["model_type"] == "pam":
-                self.pam_config = PamConfig(**pam_config)
-            else:
-                raise ValueError(f"pam_config['model_type'] should be 'pam', got {pam_config['model_type']}")
-
-        super().__init__(**kwargs)
-
-
 class DIVEdocConfig(PretrainedConfig):
     keys_to_ignore_at_inference = ["past_key_values"]
     sub_configs = {"vision_config": SwinPamVisionEncoderConfig, "text_config": GemmaConfig}
@@ -239,10 +209,6 @@ def get_vision_config(  visual_encoder_type:Literal["swinpam","siglip80m"],
         encoder_config = get_swin_vision_config(image_size=image_size,hidden_size = student_embedding_dim)
         ve_config = SwinPamVisionEncoderConfig(encoder_config=encoder_config,pam_config=pam_config)
         return ve_config
-    
-    elif visual_encoder_type =="siglip80m":
-        encoder_config = get_siglip_vision_config(image_size=image_size,num_image_token = (image_size//14)**2, hidden_size = student_embedding_dim)
-        ve_config = SiglipPAMVisionEncoderConfig(encoder_config=encoder_config,pam_config=pam_config)
-        return ve_config
+
     else:
-        raise ValueError(f"Unknown visual encoder type, need 'swinpam' or 'siglip80m, got {visual_encoder_type}.")
+        raise ValueError(f"Unknown visual encoder type, need 'swinpam', got {visual_encoder_type}.")

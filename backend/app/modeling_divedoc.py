@@ -13,7 +13,7 @@ from torch import Tensor
 
 from transformers import Cache, HybridCache, StaticCache
 from transformers.modeling_outputs import BaseModelOutput
-from transformers.utils import ModelOutput, add_start_docstrings_to_model_forward, is_torchdynamo_compiling, replace_return_docstrings
+from transformers.utils import ModelOutput, is_torchdynamo_compiling, replace_return_docstrings
 from transformers.utils.deprecation import deprecate_kwarg
 from transformers import PreTrainedModel, AutoConfig, PaliGemmaPreTrainedModel,AutoModelForCausalLM,GenerationMixin
 from transformers.models.paligemma.modeling_paligemma import PaliGemmaMultiModalProjector, PaliGemmaCausalLMOutputWithPast
@@ -21,7 +21,7 @@ from transformers.models.paligemma.configuration_paligemma import PaliGemmaConfi
 from transformers.models.donut.modeling_donut_swin import DonutSwinModel
 
 
-from configuration_divedoc import SwinPamVisionEncoderConfig, SiglipPAMVisionEncoderConfig, DIVEdocConfig
+from configuration_divedoc import SwinPamVisionEncoderConfig, DIVEdocConfig
 from typing import List, Optional, Tuple, Union, Literal
 from dataclasses import dataclass
 
@@ -132,23 +132,6 @@ class SwinPamVisionEncoder(PreTrainedModel):
         x = self.model(x)
         return BaseModelOutput(last_hidden_state=x)
 
-class SiglipPAMVisionEncoder(PreTrainedModel):
-    config_class = SiglipPAMVisionEncoderConfig
-    keys_to_ignore_at_inference = ["past_key_values"]
-
-    def __init__(self, config):
-        super().__init__(config)
-        self.model = SiglipPAM(
-            config.encoder_config,
-            config.pam_config.sequence_mapping_layer_type,
-            config.pam_config.student_fmap_dim,
-            config.pam_config.student_embedding_dim,
-            config.pam_config.teacher_fmap_dim,
-            config.pam_config.teacher_embedding_dim,
-        )
-    def forward(self,x):
-        x = self.model(x)
-        return BaseModelOutput(last_hidden_state=x)
 
 
 class PaliGemmaMultiModalProjector(nn.Module):
