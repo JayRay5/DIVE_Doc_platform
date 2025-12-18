@@ -67,7 +67,4 @@ class TestProcessor:
         assert len(decoded_text) > 0
         
         # Content check
-        assert "DIVE-Doc" in decoded_text
-        assert "2.5B" in decoded_text
-        assert "end-to-end" in decoded_text
-        assert "VLM!" in decoded_text
+        assert original_text == decoded_text
