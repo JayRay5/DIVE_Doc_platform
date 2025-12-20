@@ -1,6 +1,6 @@
 import os
 import pytest
-from src.modeling_divedoc import get_cpu_quantized_inference_model
+from src.modeling_divedoc import get_model
 from src.processing_divedoc import get_processor
 
 @pytest.fixture(scope="session")
@@ -16,7 +16,7 @@ def processor(hf_token):
 
 @pytest.fixture(scope="session")
 def model():
-    model = get_cpu_quantized_inference_model()
+    model = get_model()
     assert model.training == False
     assert all(not p.requires_grad for p in model.parameters())
     return model

@@ -513,11 +513,9 @@ class DIVEdoc(PaliGemmaPreTrainedModel, GenerationMixin):
 
         return model_inputs
     
-def get_cpu_quantized_inference_model():
+def get_model():
     model = DIVEdoc.from_pretrained("JayRay5/DIVE-Doc-FRD", trust_remote_code=True).eval()
     for param in model.parameters():
         param.requires_grad = False
 
-    #quantization for cpu inference
-    model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear},dtype=torch.qint8)
     return model

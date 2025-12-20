@@ -5,9 +5,9 @@ import tqdm
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false" 
 #Change the path of some HF environment variables to store the download data (model and dataset) from the hub to a choosen location
-os.environ['HF_HOME'] = "/home/rbencharef/Experiments/DocVQA/DIVE_Doc/.cache"
-os.environ['HF_HUB_CACHE'] = "/home/rbencharef/Experiments/DocVQA/DIVE_Doc/.cache"
-os.environ['HF_DATASETS_CACHE'] = "/home/rbencharef/Experiments/DocVQA/DIVE_Doc/.cache"
+os.environ['HF_HOME'] = "../.cache"
+os.environ['HF_HUB_CACHE'] = "../.cache"
+os.environ['HF_DATASETS_CACHE'] = "../.cache"
 
 #ML libraries
 from accelerate import infer_auto_device_map, dispatch_model
