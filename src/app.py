@@ -1,50 +1,37 @@
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false" 
-#Change the path of some HF environment variables to store the download data (model and dataset) from the hub to a choosen location
-os.environ['HF_HOME'] = "../.cache"
-os.environ['HF_HUB_CACHE'] = "../.cache"
-os.environ['HF_DATASETS_CACHE'] = "../.cache"
 import gradio as gr
-import torch
-from transformers import AutoProcessor, DonutProcessor
-from accelerate import infer_auto_device_map, dispatch_model
+import requests
+import io
 
-
-
-def app(path):
-    model = DIVEdoc.from_pretrained(path)
-    with open("./token.json", "r") as f:
-            hf_token = json.load(f)["HF_token"]
-
-   
-    processor = AutoProcessor.from_pretrained("google/paligemma-3b-ft-docvqa-896",token = hf_token)
-    processor.image_processor = DonutProcessor.from_pretrained("naver-clova-ix/donut-base-finetuned-docvqa",token=hf_token).image_processor
-    image_input_resolution = model.config.vision_config.encoder_config.image_size
-    processor.image_processor.size = {'height': image_input_resolution[0], 'width': image_input_resolution[1]}
-
-    if torch.cuda.is_available():
-        device_map = infer_auto_device_map(model,max_memory={0: "6GiB"}, 
-                                            no_split_module_classes=["DonutSwinStage","GemmaDecoderLayer"])
-            
-        model = dispatch_model(model,device_map)
-    else: 
-         model.cpu()
-
+API_URL = "http://127.0.0.1:8000/ask"
+def app():
     def answer_question(image, question):
-        # Process the image and question
-        model_inputs = processor(text=question, images=image, return_tensors="pt",padding=True)
-        model_inputs = model_inputs.to(model.device,dtype=model.dtype)
-        input_len = model_inputs["input_ids"].shape[-1]
+        if image is None:
+            return "⚠️ Error : Please upload an image before to submit."
+    
+        if not question:
+            return "⚠️ Error : Please write a question before to submit."
+        img_byte_arr = io.BytesIO()
+        image.save(img_byte_arr, format='JPEG')
+        img_bytes = img_byte_arr.getvalue()
 
-        # Answer generation
-        model.eval()
-        with torch.inference_mode():
-            pred = model.generate(**model_inputs, max_new_tokens=100, do_sample=False)[0][input_len:]
+        payload = {"question": question}
+        files = {"file": ("image.jpg", img_bytes, "image/jpeg")}
 
-        answer = processor.decode(pred, skip_special_tokens=True)
-
-        print(f"Question:{question}\nAnswer:{answer}")
-        return answer
+        try:
+            print(f"[INFO] Sending the request to {API_URL}...")
+            response = requests.post(API_URL, data=payload, files=files,timeout=480)
+            if response.status_code == 200:
+                result = response.json()
+                return result.get("answer", "Pas de réponse trouvée.")
+            else:
+                return f"Server error : ({response.status_code}) : {response.text}"
+            
+        except requests.exceptions.Timeout:
+            return "Timeout: The model took too long to respond."
+        except requests.exceptions.ConnectionError:
+            return "API Connection issue."
+        except Exception as e:
+            return f"Unexpected Error : {str(e)}"
 
     interface = gr.Interface(
         fn=answer_question,
@@ -58,5 +45,4 @@ def app(path):
             server_port=7860)
     
 if __name__ == "__main__":
-    path = "JayRay5/DIVE-Doc-FRD"
-    app(path) 
+    app() 
