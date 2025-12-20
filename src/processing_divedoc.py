@@ -22,35 +22,7 @@ logger = logging.get_logger(__name__)
 IMAGE_TOKEN = "<image>"
 EXTRA_TOKENS = [f"<loc{i:0>4}>" for i in range(1024)] + [f"<seg{i:0>3}>" for i in range(128)]
 
-#copied from https://github.com/huggingface/transformers/blob/main/src/transformers/processing_utils.py
-"""
-@dataclass
-class MultiModalData:
-    """
-"""
-    Dataclass that holds extra useful data for processing
-    multimodal data. Processors currently cannot return keys,
-    unless it is used in model's forward. Thus we have helper
-    methods that calculate and return useful data from processing
-    input multimodals (images/videos).
-    Note that this dataclass is aimed to be used only in vLLM
-    and we might change its API in the future.
-    """
-"""
-    num_image_tokens: Optional[list[int]] = None
-    num_video_tokens: Optional[list[int]] = None
-    num_audio_tokens: Optional[list[int]] = None
-    num_image_patches: Optional[list[int]] = None
-
-    def __contains__(self, key):
-        return hasattr(self, key) and getattr(self, key) is not None
-
-    def __getitem__(self, key):
-        if hasattr(self, key):
-            return getattr(self, key)
-        raise AttributeError(f"{self.__class__.__name__} has no attribute {key}")
-
-"""
+# Copied from https://github.com/huggingface/transformers/blob/main/src/transformers/processing_utils.py
 class PaliGemmaTextKwargs(TextKwargs):
     suffix: Optional[Union[TextInput, PreTokenizedInput, list[TextInput], list[PreTokenizedInput]]]
 
@@ -104,7 +76,7 @@ def build_string_from_input(prompt, bos_token, image_seq_len, image_token, num_i
     return f"{image_token * image_seq_len * num_images}{bos_token}{prompt}\n"
 
 
-#Copied and adapted from https://github.com/huggingface/transformers/blob/main/src/transformers/models/paligemma/processing_paligemma.py
+# Copied and adapted from https://github.com/huggingface/transformers/blob/main/src/transformers/models/paligemma/processing_paligemma.py
 class PaliGemmaProcessor(ProcessorMixin):
     attributes = ["image_processor", "tokenizer"]
     image_processor_class = "DonutImageProcessor"  #change from the original SigLipImageProcessor to DonutImageProcessor

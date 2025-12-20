@@ -137,7 +137,7 @@ class SwinPamVisionEncoder(PreTrainedModel):
         return BaseModelOutput(last_hidden_state=x)
 
 
-
+# Copied from https://github.com/huggingface/transformers/blob/main/src/transformers/models/paligemma/modeling_paligemma.py
 class PaliGemmaMultiModalProjector(nn.Module):
     def __init__(self, config: PaliGemmaConfig):
         super().__init__()
@@ -149,7 +149,7 @@ class PaliGemmaMultiModalProjector(nn.Module):
         return hidden_states
 
 
-
+# Copied & Adapted from https://github.com/huggingface/transformers/blob/main/src/transformers/models/paligemma/modeling_paligemma.py
 _CONFIG_FOR_DOC = "DIVEdocConfig"
 class DIVEdoc(PaliGemmaPreTrainedModel, GenerationMixin):
     config_class = DIVEdocConfig
@@ -159,9 +159,6 @@ class DIVEdoc(PaliGemmaPreTrainedModel, GenerationMixin):
         print(f"Vision config in end-to-end model: {config.vision_config.model_type}")
         if config.vision_config.model_type == "swinpam":
             self.vision_tower = SwinPamVisionEncoder(config=config.vision_config)
-
-        elif config.vision_config.model_type == "siglippam":
-            self.vision_tower = SiglipPAMVisionEncoder(config=config.vision_config)
 
         else:
             raise ValueError("Unknown model_type in vision_config")
@@ -516,8 +513,11 @@ class DIVEdoc(PaliGemmaPreTrainedModel, GenerationMixin):
 
         return model_inputs
     
-def get_model():
+def get_cpu_quantized_inference_model():
     model = DIVEdoc.from_pretrained("JayRay5/DIVE-Doc-FRD", trust_remote_code=True).eval()
     for param in model.parameters():
         param.requires_grad = False
+
+    #quantization for cpu inference
+    model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear},dtype=torch.qint8)
     return model
