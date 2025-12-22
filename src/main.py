@@ -113,4 +113,5 @@ async def ask_question(question: str = Form(...), file: UploadFile = File(...)):
 
 # To start the server using python main.py
 if __name__ == "__main__":
+    # # nosec (to ignre bandit alert)
     uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)

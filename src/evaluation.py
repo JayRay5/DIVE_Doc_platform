@@ -16,32 +16,28 @@ from processing_divedoc import PaliGemmaProcessor
 from datasets import load_dataset
 import torch
 
-from modeling_divedoc import DIVEdoc
+from modeling_divedoc import get_model
+from processing_divedoc import get_processor
 
 
-def test(path):
+def test_results_generation(path):
     # create a new folder to save the results
     results_path = "{}/results".format(path)
     if "results" not in os.listdir(path):
         os.mkdir(results_path)
 
+    hf_token = os.getenv("HF_TOKEN")
+
+    if not hf_token:
+        raise ValueError("Error: HF_TOKEN not found!")
     """
 
     STUDENT LOADING
 
     """
 
-    model = DIVEdoc.from_pretrained("JayRay5/DIVE-Doc-FRD", trust_remote_code=True)
-    tokenizer = AutoTokenizer.from_pretrained("google/paligemma-3b-ft-docvqa-896")
-    image_processor = DonutImageProcessor.from_pretrained(
-        "naver-clova-ix/donut-base-finetuned-docvqa"
-    )
-    image_processor.image_seq_length = 4096
-    image_processor.size["height"], image_processor.size["width"] = (
-        model.config.vision_config.encoder_config.image_size[0],
-        model.config.vision_config.encoder_config.image_size[1],
-    )
-    processor = PaliGemmaProcessor(tokenizer=tokenizer, image_processor=image_processor)
+    model = get_model()
+    processor = get_processor(hf_token, img_height=2048, img_width=2048, img_lm_input_seq_length=4096)
 
     """
 
@@ -51,7 +47,7 @@ def test(path):
     """
 
     test_dataset = load_dataset(
-        "pixparse/docvqa-single-page-questions", split="test", streaming=True
+        "pixparse/docvqa-single-page-questions", split="test", streaming=True, revision="33136ef456fa5a3fe68568d6e31dda4eeff95b9b"
     )
     batch_dataset = test_dataset.batch(2)
 
@@ -102,4 +98,4 @@ def test(path):
 
 if __name__ == "__main__":
     default_path = "./"
-    test(default_path)
+    test_results_generation(default_path)

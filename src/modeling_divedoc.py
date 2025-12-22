@@ -629,7 +629,7 @@ class DIVEdoc(PaliGemmaPreTrainedModel, GenerationMixin):
 
 def get_model():
     model = DIVEdoc.from_pretrained(
-        "JayRay5/DIVE-Doc-FRD", trust_remote_code=True
+        "JayRay5/DIVE-Doc-FRD", trust_remote_code=True, revision="37d4cc1859b1cb6691930fe573e33b0a88928c59"
     ).eval()
     for param in model.parameters():
         param.requires_grad = False
