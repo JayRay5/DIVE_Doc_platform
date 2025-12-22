@@ -5,10 +5,10 @@ import os
 from pathlib import Path
 from typing import Tuple, Dict
 
-# --- CONFIGURATION ---
+# --- Backend url ---
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000/ask")
 
-# Méta-données du projet
+# META-DATA
 PROJECT_INFO = {
     "title": "DIVE-Doc",
     "paper_url": "https://openaccess.thecvf.com/content/ICCV2025W/VisionDocs/html/Bencharef_DIVE-Doc_Downscaling_foundational_Image_Visual_Encoder_into_hierarchical_architecture_for_ICCVW_2025_paper.html",
@@ -24,16 +24,16 @@ PROJECT_INFO = {
 }"""
 }
 
-# --- PALETTE DE COULEURS ICCV ---
+# --- COLORS ---
 COLORS = {
-    "primary": "#005b96",    # Bleu institutionnel
-    "secondary": "#0088cc",  # Bleu clair
-    "bg": "#f8fafc",         # Gris très clair
-    "purple": "#a42967",     # Accent
-    "gold": "#FFD700"        # Award
+    "primary": "#005b96",    
+    "secondary": "#0088cc",  
+    "bg": "#f8fafc",         
+    "purple": "#a42967",     
+    "gold": "#FFD700"       
 }
 
-# --- CSS PROFESSIONNEL ---
+# --- CSS  ---
 CUSTOM_CSS = f"""
 /* Conteneur Principal En-tête */
 #title-container {{
@@ -100,7 +100,7 @@ CUSTOM_CSS = f"""
     gap: 5px;
 }}
 
-/* Zone Liens (Boutons à droite) */
+/* Link Button */
 .links-container {{
     display: flex;
     gap: 15px;
@@ -140,7 +140,7 @@ CUSTOM_CSS = f"""
     letter-spacing: 0.5px;
 }}
 
-/* RESPONSIVE DESIGN (Mobile) */
+/* RESPONSIVE DESIGN (Mobile & Tablet) */
 @media (max-width: 1200px) {{
     #title-container {{
         flex-direction: column;
@@ -157,7 +157,6 @@ CUSTOM_CSS = f"""
 }}
 """
 
-# --- FONCTION LOGIQUE ---
 def answer_question(image, question):
     if image is None:
         return "⚠️ Error: Please upload an image first."
@@ -188,9 +187,9 @@ def answer_question(image, question):
     except Exception as e:
         return f"Unexpected Error: {str(e)}"
 
-# --- CONSTRUCTION DE L'INTERFACE ---
+
 def build_app():
-    # Définition du thème
+
     theme = gr.themes.Soft(
         primary_hue=gr.themes.Color(
             c50="#e6f0f7", c100="#b3cde0", c200="#99bdd6", c300="#80adcc",
@@ -208,7 +207,7 @@ def build_app():
 
     with gr.Blocks(theme=theme, css=CUSTOM_CSS, title=f"{PROJECT_INFO['title']} Demo") as demo:
         
-        # 1. HEADER HTML STRUCTURÉ
+        # --- HEADER HTML ---
         gr.HTML(f"""
         <div id="title-container">
             <div class="header-left">
@@ -239,14 +238,14 @@ def build_app():
         </div>
         """)
 
-        # 2. ZONE PRINCIPALE
+        # --- Main Area ---
         with gr.Row():
-            # Colonne Gauche : Image
+            # --- Left Column --- 
             with gr.Column(scale=5):
                 gr.Markdown("### 📄 Upload Document")
                 input_img = gr.Image(type="pil", label="Document", height=500, sources=["upload", "clipboard"])
 
-            # Colonne Droite : Chat
+            # --- Right Column ---
             with gr.Column(scale=4):
                 gr.Markdown("### 💬 Ask a Question")
                 input_question = gr.Textbox(label="Your Question", placeholder="e.g., What is the total amount?", lines=3)
@@ -256,27 +255,24 @@ def build_app():
                 gr.Markdown("### 💡 Model Answer")
                 output_answer = gr.Textbox(label="Prediction", show_label=False, lines=5, interactive=False)
 
-        # 3. EXEMPLES
+        # --- Examples ---
         gr.Markdown("### 🧪 Try with Examples")
         gr.Examples(
-            examples=[], # Ajoute tes exemples ici ["examples/img.jpg", "question"]
+            examples=[], # samples as: ["examples/img.jpg", "question"]
             inputs=[input_img, input_question],
             label="Click an example to load"
         )
         
-        # 4. CITATION (Standard Académique)
+        # --- CITATION area ---
         with gr.Accordion("📝 Cite this work", open=False):
-            # APRÈS (Ce qui marche)
             gr.Code(value=PROJECT_INFO['citation'], language="latex", label="BibTeX", interactive=False)
 
-        # 5. ÉVÉNEMENTS
+        # --- Event ---
         submit_btn.click(fn=answer_question, inputs=[input_img, input_question], outputs=output_answer)
         input_question.submit(fn=answer_question, inputs=[input_img, input_question], outputs=output_answer)
 
-    # Récupération du chemin absolu pour les assets
-    gr.set_static_paths(paths=[Path.cwd().absolute()/"assets"])
     
-    # allowed_paths est la méthode la plus robuste
+    gr.set_static_paths(paths=[Path.cwd().absolute()/"assets"])
     demo.launch(server_name="0.0.0.0", server_port=7860)
 
 if __name__ == "__main__":
