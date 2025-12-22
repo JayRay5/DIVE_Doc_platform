@@ -11,8 +11,6 @@ os.environ["HF_DATASETS_CACHE"] = "../.cache"
 
 # ML libraries
 from accelerate import infer_auto_device_map, dispatch_model
-from transformers import AutoTokenizer, DonutImageProcessor
-from processing_divedoc import PaliGemmaProcessor
 from datasets import load_dataset
 import torch
 
