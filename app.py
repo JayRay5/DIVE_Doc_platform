@@ -2,16 +2,20 @@ import gradio as gr
 import requests
 import io
 import os
+from pathlib import Path
 
 #API_URL = "http://127.0.0.1:8000/ask"
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000/ask")
 
+paper_url = "https://openaccess.thecvf.com/content/ICCV2025W/VisionDocs/html/Bencharef_DIVE-Doc_Downscaling_foundational_Image_Visual_Encoder_into_hierarchical_architecture_for_ICCVW_2025_paper.html"
+repository_url = "https://github.com/JayRay5/DIVE-Doc"
+weights_url = "https://huggingface.co/JayRay5/DIVE-Doc-FRD"
 # --- COULEURS ICCV & THEME PERSONNALISÉ ---
 # Une palette professionnelle : Bleu profond, Teal moderne, et Gris Ardoise
 iccv_blue_primary = "#005b96"   # Bleu institutionnel fort
 iccv_blue_secondary = "#0088cc" # Bleu plus clair pour les dégradés
 iccv_bg_gray = "#f8fafc"        # Fond très clair, légèrement bleuté
-
+iccv_purple = "#a42967"
 # Définition du thème Gradio
 # On part du thème Soft et on injecte nos couleurs
 theme = gr.themes.Soft(
@@ -37,7 +41,11 @@ theme = gr.themes.Soft(
 # --- CUSTOM CSS POUR LA BANNIÈRE ICCV ---
 custom_css = f"""
 #title-container {{
-    text-align: center;
+    display: flex;              /* Active le mode Flexbox */
+    flex-direction: row;        /* Force l'alignement HORIZONTAL (Gauche vers Droite) */
+    align-items: center;        /* Centre verticalement (le logo et le texte sont à la même hauteur) */
+    justify-content: space-between;    /* Centre tout le bloc au milieu de la page */
+    gap: 40px;
     padding: 40px 20px;
     /* Dégradé professionnel ICCV */
     background: linear-gradient(135deg, {iccv_blue_primary} 0%, {iccv_blue_secondary} 100%);
@@ -46,8 +54,42 @@ custom_css = f"""
     margin-bottom: 30px;
     box-shadow: 0 10px 25px -5px rgba(0, 91, 150, 0.3);
 }}
+
+.row-logo {{
+    display: flex;              /* Active le mode Flexbox */
+    flex-direction: row;        /* Force l'alignement HORIZONTAL (Gauche vers Droite) */
+    align-items: center;        /* Centre verticalement (le logo et le texte sont à la même hauteur) */
+    justify-content: space-between;    /* Centre tout le bloc au milieu de la page */
+    max-width:30%;
+}}
+
+.link-text{{
+    color:{iccv_purple};
+    text-decoration:none;
+    font-weight: bold;
+
+}}
+a:link, a:visited, a:hover, a:active{{
+    text-decoration:none;
+}}
+
+.logo-wrapper img{{
+    /* On force la taille du SVG pour qu'il ne prenne pas toute la page */
+    height: 80px; 
+    max-width: auto;
+    
+    /* Ombre portée pour le détacher du fond */
+    drop-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}}
+
+.titles-container{{
+    display: flex;              /* Active le mode Flexbox */
+    flex-direction: column;        /* Force l'alignement HORIZONTAL (Gauche vers Droite) */
+    align-items: center;        /* Centre verticalement (le logo et le texte sont à la même hauteur) */
+    justify-content: space-between;  
+}}
 #logo-text {{
-    font-size: 3.5em;
+    font-size: 2.9em;
     font-weight: 800;
     letter-spacing: -1px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -57,17 +99,102 @@ custom_css = f"""
     font-weight: 400;
     opacity: 0.9;
     margin-top: 10px;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    gap:5px;
 }}
-/* Petit badge style conférence */
-.badge-iccv {{
-    display: inline-block;
-    background-color: rgba(255,255,255,0.15);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9em;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255,255,255,0.3);
+
+@media (min-width: 1025px) and (max-width: 1280px){{
+       #subtitle-text {{
+       font-size: 0.7em;
+       max-width:250px;
+}}
+}}
+@media (min-width: 769px) and (max-width: 1025px){{
+       #subtitle-text {{
+    font-size: 0.7em;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 10px;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items:center;
+    gap:5px;
+    max-width:250px;
+}}
+    #logo-text {{
+    font-size: 1.9em;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}}
+.logo-wrapper img{{
+    /* On force la taille du SVG pour qu'il ne prenne pas toute la page */
+    height: 40px; 
+    max-width: auto;
+    
+    /* Ombre portée pour le détacher du fond */
+    drop-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}}
+.link-text{{
+    color:{iccv_purple};
+    text-decoration:none;
+    font-weight: bold;
+    font-size:0.7em;
+
+}}
+}}
+
+@media (max-width: 768px) {{
+    #title-container {{
+        flex-direction: column; /* On empile verticalement */
+        justify-content: center;
+        text-align: center;
+        padding: 5% 2%;
+    }}
+
+    #logo-text {{
+    font-size: 1.9em;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}}
+    #subtitle-text {{
+    font-size: 0.7em;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 10px;
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    gap:5px;
+    max-width:250px;
+}}
+.row-logo {{
+    display: flex;              /* Active le mode Flexbox */
+    flex-direction: row;        /* Force l'alignement HORIZONTAL (Gauche vers Droite) */
+    align-items: center;        /* Centre verticalement (le logo et le texte sont à la même hauteur) */
+    justify-content: space-between;    /* Centre tout le bloc au milieu de la page */
+    max-width:100%;
+}}
+.logo-wrapper img{{
+    /* On force la taille du SVG pour qu'il ne prenne pas toute la page */
+    height: 40px; 
+    max-width: auto;
+    
+    /* Ombre portée pour le détacher du fond */
+    drop-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}}
+.link-text{{
+    color:{iccv_purple};
+    text-decoration:none;
+    font-weight: bold;
+    font-size:0.7em;
+
+}}
+   
 }}
 """
 
@@ -109,9 +236,20 @@ def app():
                     gr.HTML(
                         f"""
                         <div id="title-container">
-                            <div class="badge-iccv">🎉 Presented at ICCV 2025</div>
+                            <div class="logo-wrapper">
+                            <img src="/gradio_api/file=assets/iccv-navbar-logo.svg" alt="ICCV 2025 Logo">
+                            </div>
+
+                            <div class="titles-container">
                             <div id="logo-text">🤖 DIVE-Doc</div>
-                            <div id="subtitle-text">End-to-End OCR-Free Document Visual Question Answering</div>
+                            <div id="subtitle-text"><span style="text-align:center;">Spotlight Presentation at the workshop <span style="color:{iccv_purple}; font-weight:bold;"> VisionDocs </span> <span style="opacity: 0.8; margin: 0 8px;">|</span><span style="color: #FFD700; font-weight: 600;">🏆 Best Paper Award</span><span></div>
+                            </div>
+
+                            <div class="row-logo">
+                            <a href="{paper_url}" class="logo-wrapper"><img src="/gradio_api/file=assets/cropped-cvf-s.png" alt="CvF Logo"><div class="link-text">Paper</div></a>
+                            <a href="{repository_url}" class="logo-wrapper"><img src="/gradio_api/file=assets/github-mark.svg" alt="GitHub Logo"><div class="link-text">Code</div></a>
+                            <a href="{weights_url}" class="logo-wrapper"><img src="/gradio_api/file=assets/hf-logo.png" alt="HuggingFace Logo"><div class="link-text">Weights</div></a>
+                            </div>
                         </div>
                         """
                     )
@@ -178,6 +316,7 @@ def app():
             )
 
         # Lancement
+    gr.set_static_paths(paths=[Path.cwd().absolute()/"assets"])
     print(f"Starting ICCV'25 Themed Gradio on port 7860...")
     demo.launch(server_name="0.0.0.0", server_port=7860, favicon_path=None) # Tu peux ajouter un favicon.ico si tu en as un
 
