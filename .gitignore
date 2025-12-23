@@ -13,3 +13,6 @@ backend_ia/model_weights/
 # IDE
 .vscode/
 .idea/
+
+#notebook
+*.ipynb

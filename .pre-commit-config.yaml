@@ -2,27 +2,31 @@
 repos:
   # Check for security error
   - repo: local
-    rev: 1.9.2
     hooks:
       - id: bandit
+        name: Bandit Security Check
+        entry: bandit src -r -ll -ii 
+        types: [python]
         # Arguments explanation:
         # -r  : Recursive (scan all files in the folder)
         # -ll : Log Level (only report Medium and High severity issues, ignore Low)
         # -ii : Confidence (only report Medium and High confidence, avoid false positives)
         # src : The specific folder to scan (avoids scanning tests/ which usually trigger false alarms)
-        args: ["-r", "src", "-ll", "-ii"]
+        language: system
 
   # Check code quality, error and format at each commit using ruff
-  - repo: local
-    rev: v0.14.10
-    hooks:
       - id: ruff # ruff check 
+        name: Ruff Quality Check
+        entry: ruff check
+        types: [python]
+        language: system
       - id: ruff-format # ruff format 
-        args: [--check] 
+        name: Ruff Format
+        entry: ruff format --check
+        types: [python]
+        language: system
 
-  # 2. pytest 
-  - repo: local
-    hooks:
+  # Start the pytest 
       - id: pytest-check
         name: Run Project Tests
         entry: pytest -v
