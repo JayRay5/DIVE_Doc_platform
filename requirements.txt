@@ -3,7 +3,7 @@ bandit==1.9.2
 datasets==4.4.1
 fastapi==0.125.0
 gradio==6.2.0
-numpy==2.3.5
+numpy==2.4.0
 Pillow==12.0.0
 pre_commit==4.5.1
 pytest==9.0.2
