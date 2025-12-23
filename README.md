@@ -1,10 +1,8 @@
 # DIVE_Doc_plateform
-<center>
 [![CI Pipeline](https://github.com/JayRay5/DIVE_Doc_plateform/actions/workflows/push.yml/badge.svg)](https://github.com/JayRay5/DIVE_Doc_plateform/actions)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Security: Bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
-</center>
 ###### TD;LR
 This project is the open-source code of the [demo web platform]() for the model [DIVE-Doc](https://github.com/JayRay5/DIVE-Doc) presented at VisionDocs @ICCV2025. 
 
