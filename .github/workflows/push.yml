@@ -43,11 +43,29 @@ jobs:
         nohup uvicorn src.main:app --host 127.0.0.1 --port 8000 &
         BACKEND_PID=$!
         
-        # Attente de 5s pour le démarrage
+        # 5s wait before to start
         sleep 5
         
         echo "Check if API is running..."
-        curl --fail http://127.0.0.1:8000/docs > /dev/null
+        retries=0
+        max_retries=24
+        
+        until curl --output /dev/null --silent --head --fail http://127.0.0.1:8000/docs; do
+            printf '.'
+            retries=$((retries+1))
+            
+            # Si on dépasse le temps imparti
+            if [ $retries -ge $max_retries ]; then
+                echo "TIMEOUT : API has not started."
+                echo "--- LOGS DU BACKEND ---"
+                cat backend.log
+                kill $BACKEND_PID
+                exit 1
+            fi
+            
+            # 
+            sleep 5
+        done
         
         echo "API OK !"
         kill $BACKEND_PID
