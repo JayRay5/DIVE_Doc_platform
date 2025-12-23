@@ -25,7 +25,7 @@ conda activate divedoc-plateform-env
 pip install -r requirements.txt
 ```
 
-2- Install the git hook
+2- Install the git hook <br>
 I added a git hook that is executed before each push locally and run: <br>
  - bandit: to check security issues
  - ruff: to check quality and format
