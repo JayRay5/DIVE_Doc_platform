@@ -278,7 +278,12 @@ def build_app():
                     lines=3,
                 )
 
-                submit_btn = gr.Button("🚀 Run Inference", variant="primary", elem_id="inference_btn", size="lg")
+                submit_btn = gr.Button(
+                    "🚀 Run Inference",
+                    variant="primary",
+                    elem_id="inference_btn",
+                    size="lg",
+                )
 
                 gr.Markdown("### 💡 Model Answer")
                 output_answer = gr.Textbox(
