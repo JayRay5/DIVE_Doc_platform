@@ -4,7 +4,7 @@
 [![Security: Bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 ###### TL;DR
-This project is the open-source code of the [demo web platform]() for the model [DIVE-Doc](https://github.com/JayRay5/DIVE-Doc) presented at VisionDocs @ICCV2025. 
+This project contains the open-source code for the [demo web platform](https://huggingface.co/spaces/JayRay5/DIVE-Doc-docvqa), which utilizes the [DIVE-Doc](https://github.com/JayRay5/DIVE-Doc) model presented at VisionDocs @ICCV2025. 
 
 ---
 
