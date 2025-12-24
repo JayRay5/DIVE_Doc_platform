@@ -1,5 +1,7 @@
 # DIVE-Doc's Web Demo platform.
-[![CI Pipeline](https://github.com/JayRay5/DIVE_Doc_plateform/actions/workflows/push.yml/badge.svg)](https://github.com/JayRay5/DIVE_Doc_plateform/actions)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)
+[![CI/CD Pipeline](https://github.com/JayRay5/DIVE_Doc_plateform/actions/workflows/main_pipeline.yml/badge.svg)](https://github.com/JayRay5/DIVE_Doc_plateform/actions/workflows/main_pipeline.yml)
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Rayane/DIVE-Doc)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Security: Bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
@@ -16,6 +18,8 @@ Following **MLOps best practices**, this repository ensures code robustness thro
 * **🛡️ Bandit:** Static security analysis to prevent vulnerabilities.
 * **🧪 Pytest:** Unit tests and Smoke tests (API & Frontend health checks).
 * **🤖 Dependabot:** Weekly dependency vulnerability monitoring.
+* **🐳 Docker:** Fully containerized application ensuring reproducibility across environments.
+* **🚀 GitHub Actions:** Automated deployment pipeline pushing the image to Hugging Face Spaces.
 
 ## Installation & Setup
 1- Install dependencies
