@@ -9,11 +9,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # On retire IMAGE_NAME d'ici car on va le générer dynamiquement en minuscules
 
 jobs:
   # ====================================================
-  # JOB 1 : TESTS (Inchangé)
+  # JOB 1 : TESTS 
   # ====================================================
   test:
     runs-on: ubuntu-latest
@@ -83,7 +82,7 @@ jobs:
         fi
 
   # ====================================================
-  # JOB 2 : BUILD DOCKER (Correction Minuscules)
+  # JOB 2 : BUILD DOCKER 
   # ====================================================
   build-and-push:
     needs: test
@@ -113,7 +112,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} # Utilise la version minuscule
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} # Define the Image name
           tags: |
             type=raw,value=latest
             type=sha
@@ -127,13 +126,12 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   # ====================================================
-  # JOB 3 : DEPLOY TO HF (Correction Minuscules)
+  # JOB 3 : DEPLOY TO HF Space
   # ====================================================
   deploy-to-hf:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      # --- CORRECTION MINUSCULES ---
       - name: Lowercase Repo Name for URL
         run: |
           echo "LOWERCASE_REPO=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
@@ -141,9 +139,8 @@ jobs:
       - name: Update HF Space Dockerfile
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USERNAME: JayRay5      # Vérifie que c'est bien ton user HF
-          SPACE_NAME: DIVE-Doc-docvqa     # Vérifie que c'est bien ton space HF
-          # On construit l'URL avec la variable minuscule créée juste au-dessus
+          HF_USERNAME: JayRay5      
+          SPACE_NAME: DIVE-Doc-docvqa     
           DOCKER_IMAGE: ghcr.io/${{ env.LOWERCASE_REPO }}:latest
         run: |
           git config --global user.email "bot@github.com"
