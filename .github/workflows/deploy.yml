@@ -142,7 +142,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: JayRay5      # Vérifie que c'est bien ton user HF
-          SPACE_NAME: DIVE_Doc_plateform     # Vérifie que c'est bien ton space HF
+          SPACE_NAME: DIVE-Doc-docvqa     # Vérifie que c'est bien ton space HF
           # On construit l'URL avec la variable minuscule créée juste au-dessus
           DOCKER_IMAGE: ghcr.io/${{ env.LOWERCASE_REPO }}:latest
         run: |
