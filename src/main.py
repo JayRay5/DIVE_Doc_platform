@@ -74,7 +74,7 @@ def model_device_check():
         except Exception:
             device = "unknown"
     else:
-        device = constants["device"]
+        device = constants["device"].type
 
     return {"status": "ready", "device": device}
 
