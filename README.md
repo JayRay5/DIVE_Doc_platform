@@ -41,6 +41,7 @@ I added a git hook that is executed during each commit and before each push loca
 ```bash
 pre-commit install
 pre-commit install --hook-type pre-push
+chmod +x .git/hooks/pre-push 
 ```
 
 3- Run the server locally
