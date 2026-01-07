@@ -5,8 +5,10 @@
 [![Security: Bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 ###### TL;DR
-This project contains the open-source code for the [demo web platform](https://huggingface.co/spaces/JayRay5/DIVE-Doc-docvqa), which utilizes the [DIVE-Doc](https://github.com/JayRay5/DIVE-Doc) model presented at VisionDocs @ICCV2025. 
+This project contains the open-source code for the [demo web platform](https://huggingface.co/spaces/JayRay5/DIVE-Doc-docvqa), which uses the [DIVE-Doc](https://github.com/JayRay5/DIVE-Doc) model presented at VisionDocs @ICCV2025. <br>
 
+
+![Alt text for video GIF](./demo_readme.gif)
 ---
 
 ## 🛠️ MLOps & Quality Assurance
@@ -41,15 +43,11 @@ I added a git hook that is executed during each commit and before each push loca
 ```bash
 pre-commit install
 pre-commit install --hook-type pre-push
+chmod +x .git/hooks/pre-push 
 ```
 
 3- Run the server locally
 ```bash
-#terminal 1
-python app.py
-```
-
-```bash
-#terminal 2
-uvicorn src.main:app --host 127.0.0.1 --port 8000
+chmod +x ./start.sh
+./start.sh
 ```
